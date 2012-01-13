@@ -149,9 +149,10 @@ int try_mount(const char* device, const char* mount_point, const char* fs_type, 
     if (device == NULL || mount_point == NULL || fs_type == NULL)
         return -1;
     int ret = 0;
+    char mount_cmd[PATH_MAX];
     if (fs_options == NULL) {
         ret = mount(device, mount_point, fs_type,
-                       MS_NOATIME | MS_NODEV | MS_NODIRATIME, "");
+                       MS_NOATIME | MS_NODEV | MS_NODIRATIME, "check=no");
     }
     else {
         char mount_cmd[PATH_MAX];
@@ -160,6 +161,34 @@ int try_mount(const char* device, const char* mount_point, const char* fs_type, 
     }
     if (ret == 0)
         return 0;
+    
+        /*
+     * MIDNIGHT: Retry with hardcoded EXT4/RFS.
+     * Mounting fails for RFS if called without "-t rfs" and will corrupt 
+     * partition if called without "check=no". Retrying ext4, too, just to
+     * be sure.
+     */    
+    LOGW("try_mount: failed to mount %s (%s), retrying EXT4\n", device, strerror(errno));
+    sprintf(mount_cmd, "mount -t ext4 %s %s", device, mount_point);
+    ret = __system(mount_cmd);    
+    if (ret == 0)
+        return 0;
+    LOGW("try_mount: failed to mount %s (%s), retrying RFS\n", device, strerror(errno));
+    sprintf(mount_cmd, "mount -t rfs %s %s", device, mount_point);
+    ret = __system(mount_cmd);    
+    if (ret == 0)
+        return 0;
+             
+    LOGW("Getting weird...\n");
+    LOGW("MP: %s, DEV: %s\n",mount_point,device);            
+    if(strcmp("/sdcard",mount_point) == 0){            
+        LOGW("try_mount: failed to mount %s (%s), retrying VFAT for /sdcard\n", device, strerror(errno));
+        sprintf(mount_cmd, "mount -t vfat %s %s", device, mount_point);
+        ret = __system(mount_cmd);    
+        if (ret == 0)
+            return 0;
+    } 
+    
     LOGW("failed to mount %s (%s)\n", device, strerror(errno));
     return ret;
 }
@@ -180,6 +209,8 @@ int ensure_path_mounted(const char* path) {
 }
 
 int ensure_path_mounted_at_mount_point(const char* path, const char* mount_point) {
+    int ret = 0;
+    char mount_cmd[PATH_MAX];
     Volume* v = volume_for_path(path);
     if (v == NULL) {
         // no /sdcard? let's assume /data/media
@@ -243,12 +274,33 @@ int ensure_path_mounted_at_mount_point(const char* path, const char* mount_point
             return 0;
         return result;
     } else {
+      // MIDNIGHT: Try hardcoded EXT4/RFS again...
+        LOGW("ensure_path_mounted: failed to mount %s (%s), retrying EXT4\n", v->device, strerror(errno));
+        sprintf(mount_cmd, "mount -t ext4 %s %s", v->device, v->mount_point);
+        ret = __system(mount_cmd);    
+        if (ret == 0)
+            return 0;
+        LOGW("ensure_path_mounted: failed to mount %s (%s), retrying RFS\n", v->device, strerror(errno));
+        sprintf(mount_cmd, "mount -t rfs %s %s", v->device, v->mount_point);
+        ret = __system(mount_cmd);    
+        if (ret == 0)
+            return 0;        
         // let's try mounting with the mount binary and hope for the best.
-        char mount_cmd[PATH_MAX];
+	char mount_cmd[PATH_MAX];
         sprintf(mount_cmd, "mount %s", path);
         return __system(mount_cmd);
     }
-
+ // MIDNIGHT: last try - maybe not neccessary...
+    LOGW("ensure_path_mounted: failed to mount %s (%s), retrying EXT4\n", v->device, strerror(errno));
+    sprintf(mount_cmd, "mount -t ext4 %s %s", v->device, v->mount_point);
+    ret = __system(mount_cmd);    
+    if (ret == 0)
+        return 0;
+    LOGW("ensure_path_mounted: failed to mount %s (%s), retrying RFS\n", v->device, strerror(errno));
+    sprintf(mount_cmd, "mount -t rfs %s %s", v->device, v->mount_point);
+    ret = __system(mount_cmd);    
+    if (ret == 0)
+        return 0;  
     LOGE("unknown fs_type \"%s\" for %s\n", v->fs_type, mount_point);
     return -1;
 }

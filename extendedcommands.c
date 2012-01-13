@@ -459,7 +459,7 @@ int format_device(const char *device, const char *path, const char *fs_type) {
         return -1;
     }
 
-    if (strcmp(fs_type, "rfs") == 0) {
+    /*if (strcmp(fs_type, "rfs") == 0) {
         if (ensure_path_unmounted(path) != 0) {
             LOGE("format_volume failed to unmount \"%s\"\n", v->mount_point);
             return -1;
@@ -469,7 +469,7 @@ int format_device(const char *device, const char *path, const char *fs_type) {
             return -1;
         }
         return 0;
-    }
+    }*/
  
     if (strcmp(v->mount_point, path) != 0) {
         return format_unknown_device(v->device, path, NULL);
@@ -898,6 +898,7 @@ void show_advanced_menu()
     };
 
     static char* list[] = { "Reboot Recovery",
+			    "Reboot Download",
                             "Wipe Dalvik Cache",
                             "Wipe Battery Stats",
                             "Report Error",
@@ -927,29 +928,34 @@ void show_advanced_menu()
             }
             case 1:
             {
+                reboot_wrapper("download");
+                break;
+            }
+            case 2:
+            {
                 if (0 != ensure_path_mounted("/data"))
                     break;
-                ensure_path_mounted("/sd-ext");
-                ensure_path_mounted("/cache");
+                //ensure_path_mounted("/sd-ext");
+                //ensure_path_mounted("/cache");
                 if (confirm_selection( "Confirm wipe?", "Yes - Wipe Dalvik Cache")) {
                     __system("rm -r /data/dalvik-cache");
-                    __system("rm -r /cache/dalvik-cache");
-                    __system("rm -r /sd-ext/dalvik-cache");
+                //    __system("rm -r /cache/dalvik-cache");
+                //    __system("rm -r /sd-ext/dalvik-cache");
                     ui_print("Dalvik Cache wiped.\n");
                 }
                 ensure_path_unmounted("/data");
                 break;
             }
-            case 2:
+            case 3:
             {
                 if (confirm_selection( "Confirm wipe?", "Yes - Wipe Battery Stats"))
                     wipe_battery_stats();
                 break;
             }
-            case 3:
+            case 4:
                 handle_failure(1);
                 break;
-            case 4:
+            case 5:
             {
                 ui_print("Outputting key codes.\n");
                 ui_print("Go back to end debugging.\n");
@@ -964,12 +970,12 @@ void show_advanced_menu()
                 while (action != GO_BACK);
                 break;
             }
-            case 5:
+            case 6:
             {
                 ui_printlogtail(12);
                 break;
             }
-            case 6:
+            case 7:
             {
                 static char* ext_sizes[] = { "128M",
                                              "256M",
@@ -1012,7 +1018,7 @@ void show_advanced_menu()
                     ui_print("An error occured while partitioning your SD Card. Please see /tmp/recovery.log for more details.\n");
                 break;
             }
-            case 7:
+            case 8:
             {
                 ensure_path_mounted("/system");
                 ensure_path_mounted("/data");
@@ -1021,7 +1027,7 @@ void show_advanced_menu()
                 ui_print("Done!\n");
                 break;
             }
-            case 8:
+            case 9:
             {
                 static char* ext_sizes[] = { "128M",
                                              "256M",

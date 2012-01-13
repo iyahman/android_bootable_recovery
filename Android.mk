@@ -34,7 +34,7 @@ ifdef I_AM_KOUSH
 RECOVERY_NAME := ClockworkMod Recovery
 LOCAL_CFLAGS += -DI_AM_KOUSH
 else
-RECOVERY_NAME := CWM-based Recovery
+RECOVERY_NAME := Semaphore CWM Recovery
 endif
 
 RECOVERY_VERSION := $(RECOVERY_NAME) v5.0.2.7
@@ -59,11 +59,11 @@ $(foreach board_define,$(BOARD_RECOVERY_DEFINES), \
 LOCAL_MODULE_TAGS := eng
 
 LOCAL_STATIC_LIBRARIES :=
-ifeq ($(BOARD_CUSTOM_RECOVERY_KEYMAPPING),)
+#ifeq ($(BOARD_CUSTOM_RECOVERY_KEYMAPPING),true)
   LOCAL_SRC_FILES += default_recovery_ui.c
-else
-  LOCAL_SRC_FILES += $(BOARD_CUSTOM_RECOVERY_KEYMAPPING)
-endif
+#else
+#  LOCAL_SRC_FILES += $(BOARD_CUSTOM_RECOVERY_KEYMAPPING)
+#endif
 
 LOCAL_STATIC_LIBRARIES += librebootrecovery
 LOCAL_STATIC_LIBRARIES += libext4_utils libz

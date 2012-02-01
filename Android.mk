@@ -27,12 +27,12 @@ LOCAL_MODULE := recovery
 
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 
-ifdef I_AM_KOUSH
-RECOVERY_NAME := ClockworkMod Recovery
-LOCAL_CFLAGS += -DI_AM_KOUSH
-else
-RECOVERY_NAME := CWM-based Recovery
-endif
+#ifdef I_AM_KOUSH
+#RECOVERY_NAME := ClockworkMod Recovery
+#LOCAL_CFLAGS += -DI_AM_KOUSH
+#else
+RECOVERY_NAME := Semaphore CWM Recovery
+#endif
 
 RECOVERY_VERSION := $(RECOVERY_NAME) v5.5.0.4
 
@@ -70,11 +70,11 @@ LOCAL_STATIC_LIBRARIES += libext4_utils libz
 
 LOCAL_MODULE_TAGS := eng
 
-ifeq ($(BOARD_CUSTOM_RECOVERY_KEYMAPPING),)
+#ifeq ($(BOARD_CUSTOM_RECOVERY_KEYMAPPING),)
   LOCAL_SRC_FILES += default_recovery_keys.c
-else
-  LOCAL_SRC_FILES += $(BOARD_CUSTOM_RECOVERY_KEYMAPPING)
-endif
+#else
+#  LOCAL_SRC_FILES += $(BOARD_CUSTOM_RECOVERY_KEYMAPPING)
+#endif
 
 LOCAL_STATIC_LIBRARIES += libext4_utils libz
 LOCAL_STATIC_LIBRARIES += libminzip libunz libmincrypt

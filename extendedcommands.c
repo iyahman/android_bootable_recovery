@@ -914,6 +914,7 @@ void show_advanced_menu()
                             "Show log",
                             "Partition SD Card",
                             "Fix Permissions",
+			    "Clear init.d directory",
 #ifdef BOARD_HAS_SDCARD_INTERNAL
                             "Partition Internal SD Card",
 #endif
@@ -1029,6 +1030,16 @@ void show_advanced_menu()
                 break;
             }
             case 8:
+            {
+                if (confirm_selection( "Confirm clearing?", "Yes - Clear init.d")) {
+			ensure_path_mounted("/system");
+			ui_print("Clearing init.d...\n");
+			__system("rm -r /system/etc/init.d/*");
+			ui_print("Done!\n");
+		}
+                break;
+            }            
+            case 9:
             {
                 static char* ext_sizes[] = { "128M",
                                              "256M",

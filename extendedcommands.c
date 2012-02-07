@@ -915,6 +915,7 @@ void show_advanced_menu()
                             "Partition SD Card",
                             "Fix Permissions",
 			    "Clear init.d directory",
+			    "Clear NSTools settings",
 #ifdef BOARD_HAS_SDCARD_INTERNAL
                             "Partition Internal SD Card",
 #endif
@@ -1040,6 +1041,18 @@ void show_advanced_menu()
                 break;
             }            
             case 9:
+            {
+                if (confirm_selection( "Confirm clearing?", "Yes - Clear NSTools settings")) {
+			ensure_path_mounted("/data");
+			ensure_path_mounted("/datadata");
+			ui_print("Clearing NSTools settings...\n");
+			__system("rm /data/data/mobi.cyann.nstools/shared_prefs/mobi.cyann.nstools_preferences.xml");
+			__system("rm /datadata/mobi.cyann.nstools/shared_prefs/mobi.cyann.nstools_preferences.xml");
+			ui_print("Done!\n");
+		}
+                break;
+            }            
+            case 10:
             {
                 static char* ext_sizes[] = { "128M",
                                              "256M",

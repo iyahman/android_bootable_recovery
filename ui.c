@@ -222,7 +222,6 @@ static void draw_screen_locked(void)
         gr_color(0, 0, 0, 160);
         gr_fill(0, 0, gr_fb_width(), gr_fb_height());
 
-        int total_rows = gr_fb_height() / CHAR_HEIGHT;
         int i = 0;
         int j = 0;
         int offset = 0;         // offset of separating bar under menus
@@ -238,8 +237,8 @@ static void draw_screen_locked(void)
                 row++;
             }
 
-            if (menu_items - menu_show_start + menu_top >= max_menu_rows)
-                j = max_menu_rows - menu_top;
+            if (menu_items - menu_show_start + menu_top >= MAX_ROWS)
+                j = MAX_ROWS - menu_top;
             else
                 j = menu_items - menu_show_start;
 
@@ -254,8 +253,6 @@ static void draw_screen_locked(void)
                     draw_text_line(i - menu_show_start, menu[i]);
                 }
                 row++;
-                if (row >= max_menu_rows)
-                    break;
             }
 
             if (menu_items <= max_menu_rows)
@@ -266,17 +263,8 @@ static void draw_screen_locked(void)
         }
 
         gr_color(NORMAL_TEXT_COLOR);
-        int cur_row = text_row;
-        int available_rows = total_rows - row - 1;
-        int start_row = row + 1;
-        if (available_rows < MAX_ROWS)
-            cur_row = (cur_row + (MAX_ROWS - available_rows)) % MAX_ROWS;
-        else
-            start_row = total_rows - MAX_ROWS;
-
-        int r;
-        for (r = 0; r < (available_rows < MAX_ROWS ? available_rows : MAX_ROWS); r++) {
-            draw_text_line(start_row + r, text[(cur_row + r) % MAX_ROWS]);
+        for (; row < text_rows; ++row) {
+            draw_text_line(row, text[(row+text_top) % text_rows]);
         }
     }
 }

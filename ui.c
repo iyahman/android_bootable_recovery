@@ -284,7 +284,7 @@ static void draw_screen_locked(void)
             char batt_text[40];
             sprintf(batt_text, "[%d%%]", batt_level);
             draw_text_line(0, batt_text, RIGHT_ALIGN);
-	    
+			gr_color(MENU_TEXT_COLOR);	    
             gr_fill(0, (menu_top + menu_sel - menu_show_start) * CHAR_HEIGHT,
                     gr_fb_width(), (menu_top + menu_sel - menu_show_start + 1)*CHAR_HEIGHT+1);
 

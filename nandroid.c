@@ -74,8 +74,11 @@ static void yaffs_callback(const char* filename)
     strcpy(tmp, justfile);
     if (tmp[strlen(tmp) - 1] == '\n')
         tmp[strlen(tmp) - 1] = NULL;
-    if (strlen(tmp) < 30)
-        ui_nice_print("%s", tmp);
+    if (strlen(tmp) < 30) {
+	ui_set_nice(1);
+	ui_print("%s", tmp);
+	ui_set_nice(0);
+    }
     yaffs_files_count++;
     if (yaffs_files_total != 0)
         ui_set_progress((float)yaffs_files_count / (float)yaffs_files_total);

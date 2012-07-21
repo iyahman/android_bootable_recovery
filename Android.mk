@@ -34,7 +34,7 @@ LOCAL_FORCE_STATIC_EXECUTABLE := true
 RECOVERY_NAME := Semaphore CWM Recovery
 #endif
 
-RECOVERY_VERSION := $(RECOVERY_NAME) v5.5.0.4
+RECOVERY_VERSION := $(RECOVERY_NAME) v6.0.0.0
 
 LOCAL_CFLAGS += -DRECOVERY_VERSION="$(RECOVERY_VERSION)"
 RECOVERY_API_VERSION := 2
@@ -81,7 +81,7 @@ LOCAL_STATIC_LIBRARIES += libminzip libunz libmincrypt
 
 LOCAL_STATIC_LIBRARIES += libedify libbusybox libmkyaffs2image libunyaffs liberase_image libdump_image libflash_image
 
-LOCAL_STATIC_LIBRARIES += libcrecovery libflashutils libmtdutils libmmcutils libbmlutils 
+LOCAL_STATIC_LIBRARIES += libdedupe libcrypto_static libcrecovery libflashutils libmtdutils libmmcutils libbmlutils
 
 ifeq ($(BOARD_USES_BML_OVER_MTD),true)
 LOCAL_STATIC_LIBRARIES += libbml_over_mtd
@@ -94,7 +94,7 @@ LOCAL_C_INCLUDES += system/extras/ext4_utils
 
 include $(BUILD_EXECUTABLE)
 
-RECOVERY_LINKS := edify busybox flash_image dump_image mkyaffs2image unyaffs erase_image nandroid reboot volume setprop
+RECOVERY_LINKS := edify busybox flash_image dump_image mkyaffs2image unyaffs erase_image nandroid reboot volume setprop dedupe
 
 # nc is provided by external/netcat
 RECOVERY_SYMLINKS := $(addprefix $(TARGET_RECOVERY_ROOT_OUT)/sbin/,$(RECOVERY_LINKS))
@@ -151,6 +151,7 @@ LOCAL_STATIC_LIBRARIES := libmincrypt libcutils libstdc++ libc
 include $(BUILD_EXECUTABLE)
 
 include $(commands_recovery_local_path)/bmlutils/Android.mk
+include $(commands_recovery_local_path)/dedupe/Android.mk
 include $(commands_recovery_local_path)/flashutils/Android.mk
 include $(commands_recovery_local_path)/libcrecovery/Android.mk
 include $(commands_recovery_local_path)/minui/Android.mk

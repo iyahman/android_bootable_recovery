@@ -41,16 +41,16 @@
 
 #include "minui.h"
 
-#if defined(RECOVERY_BGRA)
+/*#if defined(RECOVERY_BGRA)*/
 #define PIXEL_FORMAT GGL_PIXEL_FORMAT_BGRA_8888
 #define PIXEL_SIZE   4
-#elif defined(RECOVERY_RGBX)
+/*#elif defined(RECOVERY_RGBX)
 #define PIXEL_FORMAT GGL_PIXEL_FORMAT_RGBX_8888
 #define PIXEL_SIZE   4
 #else
 #define PIXEL_FORMAT GGL_PIXEL_FORMAT_RGB_565
 #define PIXEL_SIZE   2
-#endif
+#endif*/
 
 typedef struct {
     GGLSurface texture;

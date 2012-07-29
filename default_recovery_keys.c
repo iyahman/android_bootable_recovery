@@ -38,20 +38,25 @@ int device_handle_key(int key_code, int visible) {
              * MIDNIGHT: Enable back button for SGS
              */
             case KEY_BACK:
+                if (!ui_root_menu) {
                     return GO_BACK;
+				}
             case KEY_POWER:
                 if (ui_get_showing_back_button()) {
                     return SELECT_ITEM;
                 }
-                if (!get_allow_toggle_display())
+                if (!get_allow_toggle_display() && !ui_root_menu) {
                     return GO_BACK;
+                }
                 break;
             case KEY_LEFTBRACE:
             case KEY_ENTER:
             case BTN_MOUSE:
             case KEY_CAMERA:
             case KEY_F21:
-            case KEY_SEND:           
+            case KEY_SEND:
+                return SELECT_ITEM;
+            
             case KEY_END:
             case KEY_BACKSPACE:
             case KEY_SEARCH:

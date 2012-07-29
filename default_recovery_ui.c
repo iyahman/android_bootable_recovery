@@ -28,8 +28,8 @@ char* MENU_ITEMS[] = { "reboot system now",
                        "wipe cache partition",
                        "backup and restore",
                        "mounts and storage",
-                       "advanced",
 		       "AROMA Filemanager",
+                       "advanced",
 		       "power off",
                        NULL };
 

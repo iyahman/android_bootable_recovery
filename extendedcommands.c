@@ -1151,22 +1151,22 @@ void show_advanced_menu()
                             "key test",
                             "show log",
                             "fix permissions",
-                            "partition sdcard",
-                            "partition external sdcard",
-                            "partition internal sdcard",
 			    "Clear init.d directory",
 			    "Clear NSTools settings",
+			    "partition sdcard",
+                            "partition external sdcard",
+                            "partition internal sdcard",
                             NULL
     };
 
     if (!can_partition("/sdcard")) {
-        list[7] = NULL;
+        list[9] = NULL;
     }
     if (!can_partition("/external_sd")) {
-        list[8] = NULL;
+        list[10] = NULL;
     }
     if (!can_partition("/emmc")) {
-        list[9] = NULL;
+        list[11] = NULL;
     }
 
     for (;;)
@@ -1225,15 +1225,6 @@ void show_advanced_menu()
                 ui_print("Done!\n");
                 break;
             case 7:
-                partition_sdcard("/sdcard");
-                break;
-            case 8:
-                partition_sdcard("/external_sd");
-                break;
-            case 9:
-                partition_sdcard("/emmc");
-                break;
-            case 10:
             {
                 if (confirm_selection( "Confirm clearing?", "Yes - Clear init.d")) {
 				ensure_path_mounted("/system");
@@ -1243,7 +1234,7 @@ void show_advanced_menu()
 				}
                 break;
             }            
-            case 11:
+            case 8:
             {
                 if (confirm_selection( "Confirm clearing?", "Yes - Clear NSTools settings")) {
 					ensure_path_mounted("/data");
@@ -1255,6 +1246,15 @@ void show_advanced_menu()
 				}
                 break;
 	    }
+            case 9:
+                partition_sdcard("/sdcard");
+                break;
+            case 10:
+                partition_sdcard("/external_sd");
+                break;
+            case 11:
+                partition_sdcard("/emmc");
+                break;
         }
     }
 }

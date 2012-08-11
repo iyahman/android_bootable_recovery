@@ -729,15 +729,15 @@ prompt_and_wait() {
                 show_partition_menu();
                 break;
 
-            case ITEM_ADVANCED:
-                show_advanced_menu();
-                break;
-                
             case ITEM_AROMAFM:
                 install_zip(AROMAFM);
                 break;
 
-	    case ITEM_POWEROFF:
+            case ITEM_ADVANCED:
+                show_advanced_menu();
+                break;
+    
+            case ITEM_POWEROFF:
                 poweroff = 1;
                 return;
         }

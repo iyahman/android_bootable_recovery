@@ -1254,6 +1254,7 @@ void show_advanced_menu()
 					ui_print("Done!\n");
 				}
                 break;
+	    }
         }
     }
 }

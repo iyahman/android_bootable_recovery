@@ -431,21 +431,33 @@ void show_nandroid_delete_menu(const char* path)
 }
 
 #ifndef BOARD_UMS_LUNFILE
-#define BOARD_UMS_LUNFILE	"/sys/devices/platform/s3c-usbgadget/gadget/lun0/file"
+#define BOARD_UMS_LUNFILE	"/sys/class/android_usb/android0/f_mass_storage/lun0/file"
 #endif
 
-void show_mount_usb_storage_menu()
+void show_mount_usb_storage_menu(char path[10])
 {
     int fd;
-    Volume *vol = volume_for_path("/sdcard");
-    if ((fd = open(BOARD_UMS_LUNFILE, O_WRONLY)) < 0) {
-        LOGE("Unable to open ums lunfile (%s)", strerror(errno));
+    char lunfile_path[255];
+    
+	Volume *vol = volume_for_path(path);
+	
+	//LOGE("PATH = %s", path);
+	
+	if(strcmp(path,"/sdcard")==0)
+		strcpy(lunfile_path,"/sys/devices/platform/s3c-usbgadget/gadget/lun1/file");
+	if(strcmp(path,"/emmc")==0)
+		strcpy(lunfile_path,"/sys/devices/platform/s3c-usbgadget/gadget/lun0/file");
+	
+	//LOGE("LUN PATH = %s", lunfile_path);
+	
+    if ((fd = open(lunfile_path, O_WRONLY)) < 0) {
+        LOGE("\nUnable to open ums lunfile (%s)", strerror(errno));
         return -1;
     }
 
     if ((write(fd, vol->device, strlen(vol->device)) < 0) &&
         (!vol->device2 || (write(fd, vol->device, strlen(vol->device2)) < 0))) {
-        LOGE("Unable to write to ums lunfile (%s)", strerror(errno));
+        LOGE("\nUnable to write to ums lunfile (%s)", strerror(errno));
         close(fd);
         return -1;
     }
@@ -465,7 +477,7 @@ void show_mount_usb_storage_menu()
             break;
     }
 
-    if ((fd = open(BOARD_UMS_LUNFILE, O_WRONLY)) < 0) {
+    if ((fd = open(lunfile_path, O_WRONLY)) < 0) {
         LOGE("Unable to open ums lunfile (%s)", strerror(errno));
         return -1;
     }
@@ -485,14 +497,7 @@ int confirm_selection(const char* title, const char* confirm)
         return 1;
 
     char* confirm_headers[]  = {  title, "  THIS CAN NOT BE UNDONE.", "", NULL };
-    if (0 == stat("/sdcard/clockworkmod/.one_confirm", &info)) {
-        char* items[] = { "No",
-                        confirm, //" Yes -- wipe partition",   // [1]
-                        NULL };
-        int chosen_item = get_menu_selection(confirm_headers, items, 0, 0);
-        return chosen_item == 1;
-    }
-    else {
+    if (0 == stat("/sdcard/clockworkmod/.multi_confirm", &info)) {
         char* items[] = { "No",
                         "No",
                         "No",
@@ -508,7 +513,15 @@ int confirm_selection(const char* title, const char* confirm)
         int chosen_item = get_menu_selection(confirm_headers, items, 0, 0);
         return chosen_item == 7;
     }
+    else {
+        char* items[] = { "No",
+                        confirm, //" Yes -- wipe partition",   // [1]
+                        NULL };
+        int chosen_item = get_menu_selection(confirm_headers, items, 0, 0);
+        return chosen_item == 1;
+
     }
+}
 
 #define MKE2FS_BIN      "/sbin/mke2fs"
 #define TUNE2FS_BIN     "/sbin/tune2fs"
@@ -767,8 +780,9 @@ void show_partition_menu()
         }
 
         if (!is_data_media()) {
-          options[mountable_volumes + formatable_volumes] = "mount USB storage";
-          options[mountable_volumes + formatable_volumes + 1] = NULL;
+		options[mountable_volumes + formatable_volumes] = "mount internal USB storage";
+		options[mountable_volumes + formatable_volumes + 1] = "mount external USB storage";
+		options[mountable_volumes + formatable_volumes + 2] = NULL;
         }
         else {
           options[mountable_volumes + formatable_volumes] = NULL;
@@ -777,11 +791,17 @@ void show_partition_menu()
         int chosen_item = get_menu_selection(headers, &options, 0, 0);
         if (chosen_item == GO_BACK)
             break;
-        if (chosen_item == (mountable_volumes+formatable_volumes)) {
-            show_mount_usb_storage_menu();
+        if (chosen_item == (mountable_volumes+formatable_volumes))
+        {
+            show_mount_usb_storage_menu("/sdcard");
         }
-        else if (chosen_item < mountable_volumes) {
-            MountMenuEntry* e = &mount_menu[chosen_item];
+        if (chosen_item == ((mountable_volumes+formatable_volumes)+1))
+        {
+            show_mount_usb_storage_menu("/emmc");
+        }
+        else if (chosen_item < mountable_volumes)
+        {
+			MountMenuEntry* e = &mount_menu[chosen_item];
             Volume* v = e->v;
 
             if (is_path_mounted(v->mount_point))

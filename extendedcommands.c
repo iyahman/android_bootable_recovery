@@ -1292,7 +1292,7 @@ void show_advanced_menu()
                 android_reboot(ANDROID_RB_RESTART2, 0, "recovery");
                 break;
             case 1:
-                if (0 != ensure_path_mounted("/data"))
+                if (0 != ensure_path_mounted("/system"))
                     break;
                 ensure_path_mounted("/sd-ext");
                 ensure_path_mounted("/cache");
@@ -1302,7 +1302,7 @@ void show_advanced_menu()
                     __system("rm -r /sd-ext/dalvik-cache");
                     ui_print("Dalvik Cache wiped.\n");
                 }
-                ensure_path_unmounted("/data");
+                ensure_path_unmounted("/system");
                 break;
             case 2:
                 if (confirm_selection( "Confirm wipe?", "Yes - Wipe Battery Stats"))

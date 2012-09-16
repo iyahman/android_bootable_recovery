@@ -1265,6 +1265,7 @@ void show_advanced_menu()
                             "fix permissions",
 			    "Clear init.d directory",
 			    "Clear NSTools settings",
+			    "Clear Semaphore Manager settings",
 			    "partition sdcard",
                             "partition external sdcard",
                             "partition internal sdcard",
@@ -1272,13 +1273,13 @@ void show_advanced_menu()
     };
 
     if (!can_partition("/sdcard")) {
-        list[9] = NULL;
-    }
-    if (!can_partition("/external_sd")) {
         list[10] = NULL;
     }
-    if (!can_partition("/emmc")) {
+    if (!can_partition("/external_sd")) {
         list[11] = NULL;
+    }
+    if (!can_partition("/emmc")) {
+        list[12] = NULL;
     }
 
     for (;;)
@@ -1359,12 +1360,24 @@ void show_advanced_menu()
                 break;
 	    }
             case 9:
+            {
+                if (confirm_selection( "Confirm clearing?", "Yes - Clear Semaphore Manager settings")) {
+					ensure_path_mounted("/data");
+					ensure_path_mounted("/datadata");
+					ui_print("Clearing Semaphore Manager settings...\n");
+					__system("rm /data/data/com.semaphore.sm/shared_prefs/com.semaphore.sm_preferences.xml");
+					__system("rm /datadata/com.semaphore.sm/shared_prefs/com.semaphore.sm_preferences.xml");
+					ui_print("Done!\n");
+				}
+                break;
+	    }
+            case 10:
                 partition_sdcard("/sdcard");
                 break;
-            case 10:
+            case 11:
                 partition_sdcard("/external_sd");
                 break;
-            case 11:
+            case 12:
                 partition_sdcard("/emmc");
                 break;
         }

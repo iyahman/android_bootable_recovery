@@ -462,7 +462,7 @@ int control_usb_storage_set_lun(Volume* vol, bool enable, const char *lun_file) 
     }
 
     // Write the volume path to the LUN file
-    if ((write(fd, vol_device, strlen(vol_device) + 1) < 0) &&  
+    if ((write(fd, vol_device, strlen(vol_device) + 1) < 0) &&
        (!enable || !vol->device2 || (write(fd, vol->device2, strlen(vol->device2)) < 0))) {
         LOGW("Unable to write to ums lunfile %s (%s)\n", lun_file, strerror(errno));
         close(fd);
@@ -899,14 +899,28 @@ void show_partition_menu()
           options[mountable_volumes + formatable_volumes + 1] = NULL;
         }
         else {
-          options[mountable_volumes + formatable_volumes] = NULL;
+          options[mountable_volumes + formatable_volumes] = "format /data and /data/media (/sdcard)";
+          options[mountable_volumes + formatable_volumes + 1] = NULL;
         }
 
         int chosen_item = get_menu_selection(headers, &options, 0, 0);
         if (chosen_item == GO_BACK)
             break;
         if (chosen_item == (mountable_volumes+formatable_volumes)) {
-            show_mount_usb_storage_menu();
+            if (!is_data_media()) {
+                show_mount_usb_storage_menu();
+            }
+            else {
+                if (!confirm_selection("format /data and /data/media (/sdcard)", confirm))
+                    continue;
+                handle_data_media_format(1);
+                ui_print("Formatting /data...\n");
+                if (0 != format_volume("/data"))
+                    ui_print("Error formatting /data!\n");
+                else
+                    ui_print("Done.\n");
+                handle_data_media_format(0);  
+            }
         }
         else if (chosen_item < mountable_volumes) {
             MountMenuEntry* e = &mount_menu[chosen_item];
@@ -1189,14 +1203,6 @@ void show_nandroid_menu()
     }
 }
 
-void wipe_battery_stats()
-{
-    ensure_path_mounted("/data");
-    remove("/data/system/batterystats.bin");
-    ensure_path_unmounted("/data");
-    ui_print("Battery Stats wiped.\n");
-}
-
 static void partition_sdcard(const char* volume) {
     if (!can_partition(volume)) {
         ui_print("Can't partition device: %s\n", volume);
@@ -1275,7 +1281,6 @@ void show_advanced_menu()
 
     static char* list[] = { "reboot recovery",
                             "wipe dalvik cache",
-                            "wipe battery stats",
                             "report error",
                             "key test",
                             "show log",
@@ -1290,13 +1295,13 @@ void show_advanced_menu()
     };
 
     if (!can_partition("/sdcard")) {
-        list[10] = NULL;
+        list[9] = NULL;
     }
     if (!can_partition("/external_sd")) {
-        list[11] = NULL;
+        list[10] = NULL;
     }
     if (!can_partition("/emmc")) {
-        list[12] = NULL;
+        list[11] = NULL;
     }
 
     for (;;)
@@ -1323,13 +1328,9 @@ void show_advanced_menu()
                 ensure_path_unmounted("/data");
                 break;
             case 2:
-                if (confirm_selection( "Confirm wipe?", "Yes - Wipe Battery Stats"))
-                    wipe_battery_stats();
-                break;
-            case 3:
                 handle_failure(1);
                 break;
-            case 4:
+            case 3:
             {
                 ui_print("Outputting key codes.\n");
                 ui_print("Go back to end debugging.\n");
@@ -1344,17 +1345,17 @@ void show_advanced_menu()
                 while (action != GO_BACK);
                 break;
             }
-            case 5:
+            case 4:
                 ui_printlogtail(12);
                 break;
-            case 6:
+            case 5:
                 ensure_path_mounted("/system");
                 ensure_path_mounted("/data");
                 ui_print("Fixing permissions...\n");
                 __system("fix_permissions");
                 ui_print("Done!\n");
                 break;
-            case 7:
+            case 6:
             {
                 if (confirm_selection( "Confirm clearing?", "Yes - Clear init.d")) {
 				ensure_path_mounted("/system");
@@ -1364,7 +1365,7 @@ void show_advanced_menu()
 				}
                 break;
             }            
-            case 8:
+            case 7:
             {
                 if (confirm_selection( "Confirm clearing?", "Yes - Clear NSTools settings")) {
 					ensure_path_mounted("/data");
@@ -1376,7 +1377,7 @@ void show_advanced_menu()
 				}
                 break;
 	    }
-            case 9:
+            case 8:
             {
                 if (confirm_selection( "Confirm clearing?", "Yes - Clear Semaphore Manager settings")) {
 					ensure_path_mounted("/data");
@@ -1388,13 +1389,13 @@ void show_advanced_menu()
 				}
                 break;
 	    }
-            case 10:
+            case 9:
                 partition_sdcard("/sdcard");
                 break;
-            case 11:
+            case 10:
                 partition_sdcard("/external_sd");
                 break;
-            case 12:
+            case 11:
                 partition_sdcard("/emmc");
                 break;
         }

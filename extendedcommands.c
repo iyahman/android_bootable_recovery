@@ -1294,15 +1294,15 @@ void show_advanced_menu()
                             NULL
     };
 
-    if (!can_partition("/sdcard")) {
+    //if (!can_partition("/sdcard")) {
         list[9] = NULL;
-    }
-    if (!can_partition("/external_sd")) {
+    //}
+    //if (!can_partition("/external_sd")) {
         list[10] = NULL;
-    }
-    if (!can_partition("/emmc")) {
+    //}
+    //if (!can_partition("/emmc")) {
         list[11] = NULL;
-    }
+    //}
 
     for (;;)
     {

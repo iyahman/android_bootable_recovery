@@ -487,8 +487,6 @@ int control_usb_storage_set_lun(Volume* vol, bool enable, const char *lun_file) 
     }
 }
 
-#define STRINGIFY(s) #s
-
 int control_usb_storage_for_lun(Volume* vol, bool enable) {
     static const char* lun_files[] = {
 //#ifdef BOARD_UMS_LUNFILE
@@ -496,7 +494,7 @@ int control_usb_storage_for_lun(Volume* vol, bool enable) {
 //#endif
 //        "/sys/devices/platform/usb_mass_storage/lun%d/file",
 #ifdef TARGET_USE_CUSTOM_LUN_FILE_PATH
-        STRINGIFY(TARGET_USE_CUSTOM_LUN_FILE_PATH),
+        TARGET_USE_CUSTOM_LUN_FILE_PATH,
 #endif
 	"/sys/devices/platform/s3c-usbgadget/gadget/lun%d/file",
 //        "/sys/class/android_usb/android0/f_mass_storage/lun/file",

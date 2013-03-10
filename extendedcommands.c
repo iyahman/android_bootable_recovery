@@ -493,9 +493,6 @@ int control_usb_storage_for_lun(Volume* vol, bool enable) {
 //        BOARD_UMS_LUNFILE,
 //#endif
 //        "/sys/devices/platform/usb_mass_storage/lun%d/file",
-#ifdef TARGET_USE_CUSTOM_LUN_FILE_PATH
-        TARGET_USE_CUSTOM_LUN_FILE_PATH,
-#endif
 	"/sys/devices/platform/s3c-usbgadget/gadget/lun%d/file",
 //        "/sys/class/android_usb/android0/f_mass_storage/lun/file",
 //        "/sys/class/android_usb/android0/f_mass_storage/lun_ex/file",

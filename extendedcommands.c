@@ -1317,7 +1317,6 @@ void show_advanced_menu()
                             "report error",
                             "key test",
                             "show log",
-                            "fix permissions",
 			    "Clear init.d directory",
 			    "Clear NSTools settings",
 			    "Clear Semaphore Manager settings",
@@ -1382,13 +1381,6 @@ void show_advanced_menu()
                 ui_printlogtail(12);
                 break;
             case 5:
-                ensure_path_mounted("/system");
-                ensure_path_mounted("/data");
-                ui_print("Fixing permissions...\n");
-                __system("fix_permissions");
-                ui_print("Done!\n");
-                break;
-            case 6:
             {
                 if (confirm_selection( "Confirm clearing?", "Yes - Clear init.d")) {
 				ensure_path_mounted("/system");
@@ -1398,7 +1390,7 @@ void show_advanced_menu()
 				}
                 break;
             }            
-            case 7:
+            case 6:
             {
                 if (confirm_selection( "Confirm clearing?", "Yes - Clear NSTools settings")) {
 					ensure_path_mounted("/data");
@@ -1410,7 +1402,7 @@ void show_advanced_menu()
 				}
                 break;
 	    }
-            case 8:
+            case 7:
             {
                 if (confirm_selection( "Confirm clearing?", "Yes - Clear Semaphore Manager settings")) {
 					ensure_path_mounted("/data");
@@ -1422,13 +1414,13 @@ void show_advanced_menu()
 				}
                 break;
 	    }
-            case 9:
+            case 8:
                 partition_sdcard("/sdcard");
                 break;
-            case 10:
+            case 9:
                 partition_sdcard("/external_sd");
                 break;
-            case 11:
+            case 10:
                 partition_sdcard("/emmc");
                 break;
         }

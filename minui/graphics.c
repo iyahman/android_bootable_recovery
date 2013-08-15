@@ -30,14 +30,11 @@
 
 #include <pixelflinger/pixelflinger.h>
 
-/*
 #ifdef BOARD_USE_CUSTOM_RECOVERY_FONT
 #include BOARD_USE_CUSTOM_RECOVERY_FONT
 #else
 #include "font_10x18.h"
 #endif
-*/
-#include "roboto_10x18.h"
 
 #include "minui.h"
 
@@ -68,7 +65,7 @@ static GGLSurface gr_framebuffer[NUM_BUFFERS];
 static GGLSurface gr_mem_surface;
 static unsigned gr_active_fb = 0;
 static unsigned double_buffering = 0;
-static int overscan_percent = 0;
+static int overscan_percent = OVERSCAN_PERCENT;
 static int overscan_offset_x = 0;
 static int overscan_offset_y = 0;
 

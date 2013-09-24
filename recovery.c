@@ -754,11 +754,7 @@ prompt_and_wait() {
             	case ITEM_ADVANCED:
                     ret = show_advanced_menu();
                     break;
-
-                case ITEM_POWEROFF:
-                    poweroff = 1;
-                    return;
-            	}
+            }
             if (ret == REFRESH) {
                 ret = 0;
                 continue;

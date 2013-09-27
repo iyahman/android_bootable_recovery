@@ -1274,9 +1274,9 @@ int can_partition(const char* volume) {
 
 
 #ifdef ENABLE_LOKI
-    #define FIXED_ADVANCED_ENTRIES 13
+    #define FIXED_ADVANCED_ENTRIES 11
 #else
-    #define FIXED_ADVANCED_ENTRIES 12
+    #define FIXED_ADVANCED_ENTRIES 10
 #endif
 
 int show_advanced_menu()
@@ -1400,6 +1400,7 @@ int show_advanced_menu()
             case 6:
                 ui_printlogtail(12);
                 break;
+			case 7:
             {
                 if (confirm_selection( "Confirm clearing?", "Yes - Clear init.d")) {
 				ensure_path_mounted("/system");

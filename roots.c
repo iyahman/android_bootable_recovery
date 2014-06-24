@@ -22,20 +22,23 @@
 #include <unistd.h>
 #include <ctype.h>
 
+#include <fs_mgr.h>
 #include "mtdutils/mtdutils.h"
 #include "mounts.h"
 #include "roots.h"
 #include "common.h"
 #include "make_ext4fs.h"
 
-#include <fs_mgr.h>
 #include <libgen.h>
-#include "flashutils/flashutils.h"
-#include "extendedcommands.h"
 
+#include "extendedcommands.h"
+#include "flashutils/flashutils.h"
+#include "recovery_ui.h"
 #include "voldclient/voldclient.h"
 
 static struct fstab *fstab = NULL;
+
+extern struct selabel_handle *sehandle;
 
 int get_num_volumes() {
     return fstab->num_entries;
@@ -333,8 +336,6 @@ int ensure_path_unmounted(const char* path) {
 
     return unmount_mounted_volume(mv);
 }
-
-extern struct selabel_handle *sehandle;
 
 int format_volume(const char* volume) {
     if (is_data_media_volume_path(volume)) {

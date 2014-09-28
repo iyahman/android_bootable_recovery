@@ -293,11 +293,25 @@ static void draw_progress_locked() {
 #define CENTER_ALIGN 1
 #define RIGHT_ALIGN 2
 
-static void draw_text_line(int row, const char* t) {
-  if (t[0] != '\0') {
-    if (ui_get_rainbow_mode()) ui_rainbow_mode();
-    gr_text(0, (row+1)*CHAR_HEIGHT-1, t, 0);
-  }
+static void draw_text_line(int row, const char* t, int align) {
+    int col = 0;
+    if (t[0] != '\0') {
+        int length = strnlen(t, MENU_MAX_COLS) * CHAR_WIDTH;
+        switch(align)
+        {
+            case LEFT_ALIGN:
+                col = 1;
+                break;
+            case CENTER_ALIGN:
+                col = ((gr_fb_width() - length) / 2);
+                break;
+            case RIGHT_ALIGN:
+                col = gr_fb_width() - length - 1;
+                break;
+        }
+	if (ui_get_rainbow_mode()) ui_rainbow_mode();
+        gr_text(col, (row+1)*CHAR_HEIGHT-1, t, 0);
+    }
 }
 
 void ui_setMenuTextColor(int r, int g, int b, int a) {
@@ -336,7 +350,7 @@ static void draw_screen_locked(void) {
             }
             char batt_text[40];
             sprintf(batt_text, "[%d%%]", batt_level);
-            draw_text_line(0, batt_text);
+            draw_text_line(0, batt_text, RIGHT_ALIGN);
 			gr_color(MENU_TEXT_COLOR);	    
             gr_fill(0, (menu_top + menu_sel - menu_show_start) * CHAR_HEIGHT,
                     gr_fb_width(), (menu_top + menu_sel - menu_show_start + 1)*CHAR_HEIGHT+1);
